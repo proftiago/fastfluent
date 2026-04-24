@@ -109,6 +109,45 @@ input,select,textarea{font-family:inherit}
   .ff-bottom-nav{display:none!important;}
   .ff-fab-btn{display:none!important;}
 }
+
+/* ── MODO IMPRESSÃO ── */
+@media print {
+  /* Ocultar navegação e controles */
+  .ff-sidebar, .ff-bottom-nav, .ff-fab-btn,
+  #ff-toasts, [data-noprint],
+  .ff-notif-bar { display: none !important; }
+
+  /* Layout limpo */
+  body { background: #fff !important; }
+  .ff-main { margin-left: 0 !important; padding-bottom: 0 !important; }
+  .ff-main-inner { padding: 0 !important; max-width: 100% !important; }
+
+  /* Margens da página */
+  @page { margin: 20mm 14mm 16mm; }
+
+  /* Header da escola em cada página via elemento fixo */
+  .ff-print-header {
+    display: block !important;
+    width: 100%;
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #1a1a1a;
+  }
+
+  /* Cards e tabelas */
+  [class*="card"] { box-shadow: none !important; border: 1px solid #e0e0e0 !important; }
+  table { display: table !important; width: 100% !important; }
+  th, td { white-space: normal !important; font-size: 11px !important; padding: 5px 8px !important; }
+  tr { page-break-inside: avoid; }
+  h1, h2, h3 { page-break-after: avoid; }
+  .ff-page-break { page-break-after: always; break-after: page; }
+
+  /* Botão de impressão */
+  .ff-print-btn { display: none !important; }
+}
+@media screen {
+  .ff-print-header { display: none !important; }
+}
 </style>
 </head>
 <body>
