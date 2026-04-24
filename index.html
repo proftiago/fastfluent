@@ -813,7 +813,35 @@ React.createElement("div",{style:{background:C.white,borderBottom:"1px solid "+C
     React.createElement("div",{style:{display:"flex",gap:8,alignItems:"center",flexWrap:"wrap"}},
       React.createElement("label",{style:{...S.btnSm,...S.btnSec,cursor:"pointer",display:"inline-flex",alignItems:"center",gap:5,fontSize:fz(12),padding:"7px 12px"}},
         React.createElement(Icon,{name:"csv",size:13}),"Importar CSV",
-        React.createElement("input",{type:"file",accept:".csv",style:{display:"none"},onChange:importarCSV})
+        React.createElement("input",{type:"file",accept:".csv",style:{display:"none"},onChange:function(e){
+  var file=e.target.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(ev){
+    var lines=ev.target.result.split(/\r?\n/).filter(function(l){return l.trim();});
+    if(lines.length<2)return alert("CSV vazio ou sem dados.");
+    var header=lines[0].split(",").map(function(h){return h.replace(/"/g,"").trim().toLowerCase();});
+    var added=0;
+    lines.slice(1).forEach(function(line){
+      var cols=line.match(/(".*?"|[^,]+)/g)||[];
+      var obj={};
+      header.forEach(function(h,i){obj[h]=(cols[i]||"").replace(/"/g,"").trim();});
+      if(!obj.nome)return;
+      var novo=Object.assign({},emptyA,{
+        id:nid(stu),nome:obj.nome||"",telefone:obj.telefone||obj.tel||"",
+        email:obj.email||"",idioma:obj.idioma||"Inglês",nivel:obj.nivel||"Iniciante",
+        valor:parseFloat(obj.valor||obj.mensalidade||0)||0,
+        vencimento:parseInt(obj.vencimento||10)||10,
+        forma_pagamento:obj.forma||obj.forma_pagamento||"PIX",
+        turma_id:"",ativo:true,cancelado:false
+      });
+      setStu(function(prev){return prev.concat([novo]);});
+      added++;
+    });
+    toast(added+" aluno(s) importado(s)!","success");
+  };
+  reader.readAsText(file,"UTF-8");
+  e.target.value="";
+}})
       ),
       React.createElement("button",{style:{...S.btnSm,...S.btnSec,gap:5},onClick:exportCSV},React.createElement(Icon,{name:"csv",size:14}),"Exportar CSV"),
       React.createElement("button",{style:{...S.btnSm,...S.btnSec},onClick:function(){
